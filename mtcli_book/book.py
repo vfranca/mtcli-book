@@ -9,6 +9,7 @@ logger = setup_logger("book")
 
 
 @click.command()
+@click.version_option(package_name="mtcli-book")
 @click.option(
     "--symbol", "-s", default="WINV25", help="Símbolo do ativo (default WINV25)."
 )
@@ -19,7 +20,9 @@ def book(symbol, depth):
 
     book_data = mt5.market_book_get(symbol)
     if book_data is None:
-        click.echo(f"❌ Não foi possível obter o book para {symbol}.")
+        msg = f"❌ Não foi possível obter o book para {symbol}"
+        click.echo(msg)
+        logger.warning(msg)
         shutdown()
         return
 
@@ -31,7 +34,7 @@ def book(symbol, depth):
 
     table = []
     click.echo(f"\n Book de ofertas para {symbol} (top {depth} níveis):\n")
-    click.echo(f"{'Qtd Compra':>12} | {'Preço':^10} | {'Qtd Venda':<12}")
+    click.echo(f"{'Preço':^10} | {'Compra':>12} | | {'Venda':<12}")
     click.echo("-" * 40)
 
     for i in range(max(len(bids_sorted), len(asks_sorted))):
@@ -40,11 +43,15 @@ def book(symbol, depth):
 
         table.append(
             [
-                f"{bid.volume:.2f}" if bid else "",
                 f"{bid.price:.{conf.digitos}f}" if bid else ask.price if ask else "",
+                f"{bid.volume:.2f}" if bid else "",
                 f"{ask.volume:.2f}" if ask else "",
             ]
         )
 
-    click.echo(tabulate(table, headers=["Qtd Compra", "Preço", "Qtd Venda"]))
+    click.echo(tabulate(table, headers=["Preço", "Compra", "Venda"]))
     shutdown()
+
+
+if __name__ == "__main__":
+    book()

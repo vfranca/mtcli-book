@@ -1,6 +1,6 @@
 [project]
 name = "mtcli-book"
-version = "0.1.1"
+version = "0.2.0"
 description = "Plugin mtcli do book de ofertas"
 authors = [
     {name = "Valmir França da Silva",email = "vfranca3@gmail.com"}
